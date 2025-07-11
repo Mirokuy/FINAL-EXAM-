@@ -3,23 +3,23 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image, ImageOps
 
-#  Custom CSS for Black Background
+#  Custom dark theme styling
 st.markdown("""
     <style>
-    body {
-        background-color: #000000;
-        color: white;
-    }
     .stApp {
         background-color: #000000;
-    }
-    h1, h2, h3, h4, h5, h6, .stTextInput label, .stFileUploader label {
         color: white;
+    }
+    .stMarkdown, .css-1v0mbdj, .stTextInput, .stFileUploader, .stSelectbox, .stTextArea {
+        color: white !important;
+    }
+    .css-1v0mbdj p, .css-1v0mbdj h1, .css-1v0mbdj h2, .css-1v0mbdj h3 {
+        color: white !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
-#  Load model
+#  Load model once
 @st.cache_resource
 def load_model():
     model = tf.keras.models.load_model('Weather_model.h5')
@@ -27,12 +27,12 @@ def load_model():
 
 model = load_model()
 
-#  App Title and Instructions
-st.title(" Multiclass Weather Prediction (CNN)")
+#  Title
+st.title(" Multiclass Weather Prediction ")
 st.write("Upload a weather image and the model will classify it as **Cloudy**, **Rain**, **Shine**, or **Sunrise**.")
 
-#  Upload image
-file = st.file_uploader(" Choose a weather image", type=["jpg", "jpeg", "png"])
+#  File upload
+file = st.file_uploader(" Upload a weather image", type=["jpg", "jpeg", "png"])
 
 #  Prediction function
 def import_and_predict(image_data, model):
@@ -43,17 +43,17 @@ def import_and_predict(image_data, model):
     prediction = model.predict(img_reshape)
     return prediction
 
-#  Display result
+#  Run model prediction
 if file is None:
-    st.info(" Upload an image to start prediction.")
+    st.info(" Upload an image to begin.")
 else:
     image = Image.open(file)
-    st.image(image, caption='Uploaded Image', use_column_width=True)
+    st.image(image, caption='Uploaded Image', use_container_width=True)
 
     prediction = import_and_predict(image, model)
     class_names = ['Cloudy', 'Rain', 'Shine', 'Sunrise']
     predicted_class = class_names[np.argmax(prediction)]
     confidence = np.max(prediction) * 100
 
-    st.success(f" **Prediction:** {predicted_class}")
+    st.success(f"🌤 **Prediction:** {predicted_class}")
     st.info(f" **Model Confidence:** {confidence:.2f}%")
